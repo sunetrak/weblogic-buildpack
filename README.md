@@ -40,14 +40,14 @@ $ cf set-env my-application JBP_CONFIG_JAVA_MAIN '{arguments: "-server.port=\$PO
 Environment variable can also be specified in the applications `manifest` file. For example, to specify an environment variable in an applications manifest file that disables Auto-reconfiguration.
 
 ```bash
-  env: 
+  env:
     JBP_CONFIG_SPRING_AUTO_RECONFIGURATION: '{enabled: false}'
 ```
 
 This final example shows how to change the version of Tomcat that is used by the buildpack with an environment variable specified in the applications manifest file.
 
 ```bash
-  env: 
+  env:
     JBP_CONFIG_TOMCAT: '{tomcat: { version: 8.0.+ }}'
 ```
 
@@ -69,8 +69,9 @@ To learn how to configure various properties of the buildpack, follow the "Confi
 	* [WebLogic](docs/container-wls.md) ([Configuration](docs/container-wls.md#configuration))
 * Standard Frameworks
 	* [AppDynamics Agent](docs/framework-app_dynamics_agent.md) ([Configuration](docs/framework-app_dynamics_agent.md#configuration))
-	* [Introscope Agent](docs/framework-introscope_agent.md) ([Configuration](docs/framework-introscope_agent.md#configuration))
+	* [Debug](docs/framework-debug.md) ([Configuration](docs/debug.md#configuration))
 	* [DynaTrace Agent](docs/framework-dyna_trace_agent.md) ([Configuration](docs/framework-dyna_trace_agent.md#configuration))
+	* [Introscope Agent](docs/framework-introscope_agent.md) ([Configuration](docs/framework-introscope_agent.md#configuration))
 	* [Java Options](docs/framework-java_opts.md) ([Configuration](docs/framework-java_opts.md#configuration))
 	* [JRebel Agent](docs/framework-jrebel_agent.md) ([Configuration](docs/framework-jrebel_agent.md#configuration))
 	* [Luna Security Provider](docs/framework-luna_security_provider.md) ([Configuration](docs/framework-luna_security_provider.md#configuration))
@@ -152,6 +153,7 @@ $ bundle exec rake
 This buildpack is released under version 2.0 of the [Apache License][].
 
 [Apache License]: http://www.apache.org/licenses/LICENSE-2.0
+[bosh-lite]: http://github.com/cloudfoundry/bosh-lite/
 [Cloud Foundry]: http://www.cloudfoundry.com
 [contributor guidelines]: CONTRIBUTING.md
 [disables `remote_downloads`]: docs/extending-caches.md#configuration
@@ -160,17 +162,16 @@ This buildpack is released under version 2.0 of the [Apache License][].
 [Grails]: http://grails.org
 [Groovy]: http://groovy.codehaus.org
 [Installing Cloud Foundry on Vagrant]: http://blog.cloudfoundry.com/2013/06/27/installing-cloud-foundry-on-vagrant/
+[java-buildpack]: http://github.com/cloudfoundry/java-buildpack/
+[limited footprint]: http://docs.oracle.com/middleware/1212/wls/START/overview.htm#START234
+[Linux 64 bit JRE]: http://javadl.sun.com/webapps/download/AutoDL?BundleId=83376
+[Oracle WebLogic Application Server]: http://www.oracle.com/technetwork/middleware/weblogic/overview/index.html
+[Pivotal Web Services Marketplace]: http://docs.run.pivotal.io/marketplace/services/
 [Play Framework]: http://www.playframework.com
 [pull request]: https://help.github.com/articles/using-pull-requests
 [Pull requests]: http://help.github.com/send-pull-requests
 [Spring Boot]: http://projects.spring.io/spring-boot/
-[java-buildpack]: http://github.com/cloudfoundry/java-buildpack/
-[Oracle WebLogic Application Server]: http://www.oracle.com/technetwork/middleware/weblogic/overview/index.html
-[bosh-lite]: http://github.com/cloudfoundry/bosh-lite/
-[Pivotal Web Services Marketplace]: http://docs.run.pivotal.io/marketplace/services/
-[User Provided Services]: http://docs.run.pivotal.io/devguide/services/user-provided.html
-[Linux 64 bit JRE]: http://javadl.sun.com/webapps/download/AutoDL?BundleId=83376
-[WebLogic Server]: http://www.oracle.com/technetwork/middleware/weblogic/downloads/index.html
-[limited footprint]: http://docs.oracle.com/middleware/1212/wls/START/overview.htm#START234
 [syslog drain endpoint like Splunk]: http://www.youtube.com/watch?v=rk_K_AAHEEI
+[User Provided Services]: http://docs.run.pivotal.io/devguide/services/user-provided.html
+[WebLogic Server]: http://www.oracle.com/technetwork/middleware/weblogic/downloads/index.html
 [Wikipedia]: https://en.wikipedia.org/wiki/YAML#Basic_components_of_YAML

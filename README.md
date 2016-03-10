@@ -1,8 +1,4 @@
 # Cloud Foundry WebLogic Buildpack
-[![Build Status](https://travis-ci.org/pivotal-cf/weblogic-buildpack.svg?branch=master)](https://travis-ci.org/pivotal-cf/weblogic-buildpack)
-[![Dependency Status](https://gemnasium.com/pivotal-cf/weblogic-buildpack.svg)](https://gemnasium.com/pivotal-cf/weblogic-buildpack)
-[![Code Climate](https://codeclimate.com/github/pivotal-cf/weblogic-buildpack/badges/gpa.svg)](https://codeclimate.com/github/pivotal-cf/weblogic-buildpack/feed)
-[![Code Climate](https://codeclimate.com/github/pivotal-cf/weblogic-buildpack/badges/coverage.svg)](https://codeclimate.com/github/pivotal-cf/weblogic-buildpack/feed)
 
 The `weblogic-buildpack` is a custom [Cloud Foundry] buildpack, based on a fork of the [Java-Buildpack][], for running JEE applications with WebLogic Server as container on Cloud Foundry.
 

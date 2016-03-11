@@ -1,6 +1,12 @@
 # Cloud Foundry WebLogic Buildpack
 
-The `weblogic-buildpack` is a custom [Cloud Foundry] buildpack, based on a fork of the [Java-Buildpack][], for running JEE applications with WebLogic Server as container on Cloud Foundry.
+The `weblogic-buildpack` is a custom [Cloud Foundry] buildpack, based on a fork of the [Java-Buildpack][], for running JEE applications with WebLogic Server as container on Cloud Foundry.  The WLS Buildpack is more of a proof of the concept and a demo/preview and not an official supported buildpack.
+
+At the time of creation of this buildpack, there was no Diego or Docker support. But since late 2015, Diego supports working with docker images. Users are suggested to explore the Docker option for WebLogic Server when possible if it meets their requirements, compared to customizing, building and maintainng the buildpack.
+
+Links:
+https://github.com/oracle/docker-images/tree/master/OracleWebLogic
+https://docs.oracle.com/middleware/1213/wls/DOCKR/configuration.htm#DOCKR121
 
 The [Java-Buildpack] itself is a [Cloud Foundry][] buildpack for running JVM-based applications.  It is designed to run many JVM-based applications ([Grails][], [Groovy][], Java Main, [Play Framework][], [Spring Boot][], and Servlet) with no additional configuration, but supports configuration of the standard components, and extension to add custom components.
 

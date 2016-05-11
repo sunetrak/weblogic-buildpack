@@ -106,7 +106,8 @@ module JavaBuildpack
         monitor_agent  = JavaBuildpack::Container::Wls::MonitorAgent.new(@application)
         monitor_script = monitor_agent.monitor_script
 
-        releaser             = JavaBuildpack::Container::Wls::WlsReleaser.new(@application, @droplet, @domain_home,
+        releaser             = JavaBuildpack::Container::Wls::WlsReleaser.new(@application, @app_config_cache_root,
+                                                                              @droplet, @domain_home,
                                                                               @server_name, @start_in_wlx_mode)
         pre_start_script     = releaser.pre_start
         post_shutdown_script = releaser.post_shutdown
@@ -280,7 +281,8 @@ module JavaBuildpack
           'wls_install'              => @wls_install,
           'wls_domain_yaml_config'   => @wls_domain_yaml_config,
           'wls_domain_config_script' => @wls_domain_config_script,
-          'wls_domain_path'          => @wls_domain_path
+          'wls_domain_path'          => @wls_domain_path,
+          'buildpack_config_cache_root'  => @buildpack_config_cache_root
         }
 
         configurer = JavaBuildpack::Container::Wls::WlsConfigurer.new(configuration_map)

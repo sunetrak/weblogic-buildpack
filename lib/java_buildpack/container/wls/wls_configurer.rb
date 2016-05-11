@@ -39,6 +39,7 @@ module JavaBuildpack
           @wls_domain_path          = configuration_map['wls_domain_path']
           @wls_domain_yaml_config   = configuration_map['wls_domain_yaml_config']
           @wls_domain_config_script = configuration_map['wls_domain_config_script']
+          @wls_buildpack_config_cache_root  = configuration_map['buildpack_config_cache_root']
         end
 
         # Configure Weblogic
@@ -207,11 +208,14 @@ module JavaBuildpack
 
         def link_jars_to_domain
           log('Linking pre and post jar directories relative to the Domain')
-
+          system '/bin/mkdir', '-p', "#{@config_cache_root}/#{WLS_PRE_JARS_CACHE_DIR}"
+          system '/bin/mkdir', '-p', "#{@config_cache_root}/#{WLS_POST_JARS_CACHE_DIR}"
+          system '/bin/cp', '-R', "#{@wls_buildpack_config_cache_root}/#{WLS_PRE_JARS_CACHE_DIR}",  "#{@config_cache_root}/"
+          system '/bin/cp', '-R', "#{@wls_buildpack_config_cache_root}/#{WLS_POST_JARS_CACHE_DIR}",  "#{@config_cache_root}/"
           system '/bin/ln', '-s', "#{@config_cache_root}/#{WLS_PRE_JARS_CACHE_DIR}",
-                 "#{@domain_home}/#{WLS_PRE_JARS_CACHE_DIR}", '2>/dev/null'
+                 "#{@domain_home}/#{WLS_PRE_JARS_CACHE_DIR}"
           system '/bin/ln', '-s', "#{@config_cache_root}/#{WLS_POST_JARS_CACHE_DIR}",
-                 "#{@domain_home}/#{WLS_POST_JARS_CACHE_DIR}", '2>/dev/null'
+                 "#{@domain_home}/#{WLS_POST_JARS_CACHE_DIR}"
         end
 
         # Generate the property file based on app bundled configs for test against WLST

@@ -107,7 +107,8 @@ fi
 
 # Get the Staging env Memory limit
 
-STAGING_MEMORY_LIMIT=REPLACE_STAGING_MEMORY_LIMIT_MARKER
+#STAGING_MEMORY_LIMIT=REPLACE_STAGING_MEMORY_LIMIT_MARKER
+STAGING_MEMORY_LIMIT=512
 
 # Check the MEMORY_LIMIT env variable and see if it has been modified compared to staging env
 # Possible the app was not restaged to reflect the new MEMORY_LIMITs
@@ -162,15 +163,15 @@ fi
 
 # Additional jvm arguments
 
-wls_pre_classpath='export PRE_CLASSPATH="REPLACE_DOMAIN_HOME_MARKER/REPLACE_WLS_PRE_JARS_CACHE_DIR_MARKER/*"'
-wls_post_classpath='export POST_CLASSPATH="REPLACE_DOMAIN_HOME_MARKER/REPLACE_WLS_POST_JARS_CACHE_DIR_MARKER/*"'
+wls_pre_classpath='export PRE_CLASSPATH="REPLACE_DOMAIN_HOME_MARKER/REPLACE_WLS_PRE_JARS_CACHE_DIR_MARKER/*":$PRE_CLASSPATH'
+wls_post_classpath='export POST_CLASSPATH="REPLACE_DOMAIN_HOME_MARKER/REPLACE_WLS_POST_JARS_CACHE_DIR_MARKER/*":$POST_CLASSPATH'
 
 export APP_ID_ARGS=" -Dapplication.name=${APP_NAME} -Dapplication.instance-index=${INSTANCE_INDEX} \
                      -Dapplication.space=${SPACE_NAME} -Dapplication.ipaddr=${IP_ADDR} -Dapplication.host=${HOSTNAME}"
 
 
 sed -i.bak "s#^DOMAIN_HOME#\\n${wls_pre_classpath}\\n${wls_post_classpath}\\n&#1" REPLACE_DOMAIN_HOME_MARKER/startWebLogic.sh
-sed -i.bak "s#^DOMAIN_HOME#export USER_MEM_ARGS='${JVM_ARGS} ${APP_ID_ARGS} '\\n&#1" REPLACE_DOMAIN_HOME_MARKER/startWebLogic.sh
+sed -i.bak "s#^DOMAIN_HOME#export USER_MEM_ARGS='${JVM_ARGS} -Djava.net.preferIPv4Stack=true  ${JAVA_OPTIONS} ${APP_ID_ARGS} ${JAVA_OPTS} ${USER_MEM_ARGS} '\\n&#1" REPLACE_DOMAIN_HOME_MARKER/startWebLogic.sh
 
 
 # 5. Server renaming using index to differentiate server instances

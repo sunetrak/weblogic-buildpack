@@ -403,6 +403,19 @@ def deployApp(appName, appSrcPath, targetServer):
  except:
   dumpStack()
 
+#==========================================
+# Deploy a Shared Library
+#==========================================
+
+def deploySharedLib(libName, libSrcPath, targetServer):
+ try:
+  cd('/')
+  deploy(appName=libName, path=libSrcPath, targets=targetServer, libraryModule='true')
+  print 'Deployed Shared Library ' + libName + ' with source path: ' + libSrcPath + ' to ' + targetServer
+ except:
+  dumpStack()
+
+
 
 #==========================================
 # Create a domain from the weblogic domain template.
@@ -489,6 +502,12 @@ def configureDomain(domainConfigProps):
   # Associate the TLog Store Datasource with the Server
   if (tlogDataSource != ''):
     configureTLogs(tlogDataSource, targetServer)
+
+
+  # Uncomment and edit to deploy a shared library
+  #libName = 'jax-rs'
+  #libSrcPath = WL_HOME + 'common/deployable-libraries/jsf-2.0.war'
+  #deploySharedLib(libName, libSrcPath, targetServer)
 
   appName = domainEnvConfig.get('appName')
   appSrcPath = domainEnvConfig.get('appSrcPath')

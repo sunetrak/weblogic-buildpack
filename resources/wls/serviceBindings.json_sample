@@ -113,7 +113,7 @@
         {
             "credentials": {
                 "hostname": "us-east-05.net",
-                "jdbcUrl": "jdbc:oracle:thin@2ae2dc9d@us-east-05.net:1521:ad_ff0a0d5",
+                "jdbcUrl": "jdbc:oracle:thin@2ae2dc9d@us-east-05.net:1521/ad_ff0a0d5",
                 "password": "2ae9d",
                 "username": "b7dedc9",
                 "initCapacity": 5,

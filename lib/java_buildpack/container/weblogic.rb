@@ -48,7 +48,7 @@ module JavaBuildpack
 
         if @supports
           @wls_version, @wls_uri = JavaBuildpack::Repository::ConfiguredItem
-                                     .find_item(@component_name, @configuration) do |candidate_version|
+                                        .find_item(@component_name, @configuration) do |candidate_version|
             candidate_version.check_size(3)
           end
 
@@ -175,11 +175,11 @@ module JavaBuildpack
         end
 
         # For now, expecting only one script to be run to create the domain
-        @wls_domain_config_script = Dir.glob("#{@app_config_cache_root}/#{WLS_SCRIPT_CACHE_DIR}/*.py")[0]
+        @wls_domain_config_script = Dir.glob("#{@app_config_cache_root}/#{SCRIPT_CACHE_DIR}/*.py")[0]
 
         # If there is no Domain Script, use the buildpack bundled script.
         unless @wls_domain_config_script
-          @wls_domain_config_script = Dir.glob("#{@buildpack_config_cache_root}/#{WLS_SCRIPT_CACHE_DIR}/*.py")[0]
+          @wls_domain_config_script = Dir.glob("#{@buildpack_config_cache_root}/#{SCRIPT_CACHE_DIR}/*.py")[0]
           log('No Domain creation script found, reusing one from the buildpack bundled template!!')
         end
 
@@ -282,7 +282,7 @@ module JavaBuildpack
           'wls_domain_yaml_config'   => @wls_domain_yaml_config,
           'wls_domain_config_script' => @wls_domain_config_script,
           'wls_domain_path'          => @wls_domain_path,
-          'buildpack_config_cache_root'  => @buildpack_config_cache_root
+          'wls_buildpack_config_cache_root'  => @buildpack_config_cache_root
         }
 
         configurer = JavaBuildpack::Container::Wls::WlsConfigurer.new(configuration_map)

@@ -55,64 +55,40 @@ module JavaBuildpack
           @pre_start_script = Dir.glob("#{@application.root}/#{PRE_START_SCRIPT}")[0]
           @post_stop_script = Dir.glob("#{@application.root}/#{POST_STOP_SCRIPT}")[0]
 
+          # Uncomment as needed and customize it...
           # Change this to add any number of custom scripts/resources to app root
-          system "/bin/cp #{CUSTOM1_HOOKS_SRC_PATH}/*.sh #{@application.root}/"
-          system "/bin/cp -r #{CUSTOM1_RESOURCE_PATH} #{@app_config_cache_root}"
-
-          @pre_custom1_start_script = Dir.glob("#{@application.root}/#{PRE_CUSTOM1_START_SCRIPT}")[0]
+          if CUSTOM_RESOURCES_PRESENT
+            system "/bin/cp #{CUSTOM1_HOOKS_SRC_PATH}/*.sh #{@application.root}/"
+            system "/bin/cp -r #{CUSTOM1_RESOURCE_PATH} #{@app_config_cache_root}"
+            @pre_custom1_start_script = Dir.glob("#{@application.root}/#{PRE_CUSTOM1_START_SCRIPT}")[0]
+          end
 
           system "chmod +x #{@application.root}/*.sh"
-          system "chmod -R 755 #(@app_config_cache_root}"
+          system "chmod -R 755 #{@app_config_cache_root}"
 
           modify_pre_start_script
         end
 
         # The Pre-Start script
         def pre_start
-          "/bin/bash ./#{PRE_START_SCRIPT}"
+          # Uncomment following line if need to add custom hook script to be part of the startup
+          if CUSTOM_RESOURCES_PRESENT
+            "/bin/bash ./#{PRE_START_SCRIPT} && source ./#{PRE_CUSTOM1_START_SCRIPT} "
+          else
+            "/bin/bash ./#{PRE_START_SCRIPT}"
+          end
         end
 
         # The Post-Shutdown script
         def post_shutdown
-          "/bin/bash ./#{POST_STOP_SCRIPT}"
+          if CUSTOM_RESOURCES_PRESENT
+            "/bin/bash ./#{POST_STOP_SCRIPT} && source ./#{POST_CUSTOM1_STOP_SCRIPT}"
+          else
+            "/bin/bash ./#{POST_STOP_SCRIPT}"
+          end
         end
 
         private
-
-        HOOKS_RESOURCE   = 'hooks'.freeze
-        PRE_START_SCRIPT = 'preStart.sh'.freeze
-        POST_STOP_SCRIPT = 'postStop.sh'.freeze
-
-        START_STOP_HOOKS_SRC_PATH = "#{BUILDPACK_CONFIG_CACHE_DIR}/#{HOOKS_RESOURCE}".freeze
-
-
-        # the package structure would be:
-        # wls-buildpack
-        #  -- resources
-        #      -- wls    # BUILDPACK_CONFIG_CACHE_DIR
-        #         -- hooks
-        #            --- preStart.sh
-        #            --- postStop.sh
-        #      -- custom1 # CUSTOM1_RESOURCE_PATH
-        #         -- hooks
-        #            --- preCustomStart.sh
-        #            --- postCustomStop.sh
-        #         -- customType1  # CUSTOM1_TYPE1_RESOURCE_PATH
-        #            --- lib # containing jars
-        #         -- customType2  # CUSTOM1_TYPE2_RESOURCE_PATH
-        #            --- lib # containing jars
-
-        # Allow customization of resources
-        # Edit names as required
-        CUSTOM1_RESOURCE        = 'custom1'.freeze
-        CUSTOM1_TYPE1_RESOURCE   = 'custom1Type1'.freeze
-        CUSTOM1_TYPE2_RESOURCE   = 'custom1Type2'.freeze
-        PRE_CUSTOM1_START_SCRIPT = 'preCustom1Start.sh'.freeze
-
-        CUSTOM1_RESOURCE_PATH      = "#{BUILDPACK_CONFIG_CACHE_DIR}/../#{CUSTOM1_RESOURCE}".freeze
-        CUSTOM1_TYPE1_RESOURCE_PATH = "#{CUSTOM1_RESOURCE_PATH}/#{CUSTOM1_TYPE1_RESOURCE}".freeze
-        CUSTOM1_TYPE2_RESOURCE_PATH = "#{CUSTOM1_RESOURCE_PATH}/#{CUSTOM1_TYPE2_RESOURCE}".freeze
-        CUSTOM1_HOOKS_SRC_PATH     = "#{CUSTOM1_RESOURCE_PATH}/#{HOOKS_RESOURCE}".freeze
 
         # Modify the templated preStart script with actual values
 

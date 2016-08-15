@@ -18,6 +18,17 @@ To use this buildpack specify the URI of the repository when pushing an applicat
 $ cf push <APP-NAME> -p <ARTIFACT> -b https://github.com/pivotal-cf/weblogic-buildpack.git
 ```
 
+## Examples
+The following are _very_ simple examples for deploying the artifact types that we support.
+
+* [Embedded web server](docs/example-embedded-web-server.md)
+* [Grails](docs/example-grails.md)
+* [Groovy](docs/example-groovy.md)
+* [Java Main](docs/example-java_main.md)
+* [Play Framework](docs/example-play_framework.md)
+* [Servlet](docs/example-servlet.md)
+* [Spring Boot CLI](docs/example-spring_boot_cli.md)
+
 ## Configuration and Extension
 The buildpack supports extension through the use of Git repository forking. The easiest way to accomplish this is to use [GitHub's forking functionality][] to create a copy of this repository.  Make the required extension changes in the copy of the repository. Then specify the URL of the new repository when pushing Cloud Foundry applications. If the modifications are generally applicable to the Cloud Foundry community, please submit a [pull request][] with the changes.
 
@@ -137,6 +148,7 @@ Creating build/weblogic-buildpack-offline-cfd6b17.zip
 
 ### Package Versioning
 Keeping track of different versions of the buildpack can be difficult.  To help with this, the rake `package` task puts a version discriminator in the name of the created package file.  The default value for this discriminator is the current Git hash (e.g. `cfd6b17`).  To change the version when creating a package, use the `VERSION=<VERSION>` argument:
+
 ```bash
 $ bundle install
 $ bundle exec rake package VERSION=2.1
@@ -160,8 +172,8 @@ $ bundle exec rake
 ## License
 This buildpack is released under version 2.0 of the [Apache License][].
 
+[`config/` directory]: config
 [Apache License]: http://www.apache.org/licenses/LICENSE-2.0
-[bosh-lite]: http://github.com/cloudfoundry/bosh-lite/
 [Cloud Foundry]: http://www.cloudfoundry.com
 [contributor guidelines]: CONTRIBUTING.md
 [disables `remote_downloads`]: docs/extending-caches.md#configuration
@@ -169,18 +181,9 @@ This buildpack is released under version 2.0 of the [Apache License][].
 [GitHub's forking functionality]: https://help.github.com/articles/fork-a-repo
 [Grails]: http://grails.org
 [Groovy]: http://groovy.codehaus.org
-[Installing Cloud Foundry on Vagrant]: http://blog.cloudfoundry.com/2013/06/27/installing-cloud-foundry-on-vagrant/
-[java-buildpack]: http://github.com/cloudfoundry/java-buildpack/
-[limited footprint]: http://docs.oracle.com/middleware/1212/wls/START/overview.htm#START234
-[Linux 64 bit JRE]: http://javadl.sun.com/webapps/download/AutoDL?BundleId=83376
-[Oracle WebLogic Application Server]: http://www.oracle.com/technetwork/middleware/weblogic/overview/index.html
-[Pivotal Web Services Marketplace]: http://docs.run.pivotal.io/marketplace/services/
 [Play Framework]: http://www.playframework.com
 [pull request]: https://help.github.com/articles/using-pull-requests
 [Pull requests]: http://help.github.com/send-pull-requests
 [Running Cloud Foundry locally]: http://docs.cloudfoundry.org/deploying/boshlite/index.html
 [Spring Boot]: http://projects.spring.io/spring-boot/
-[syslog drain endpoint like Splunk]: http://www.youtube.com/watch?v=rk_K_AAHEEI
-[User Provided Services]: http://docs.run.pivotal.io/devguide/services/user-provided.html
-[WebLogic Server]: http://www.oracle.com/technetwork/middleware/weblogic/downloads/index.html
 [Wikipedia]: https://en.wikipedia.org/wiki/YAML#Basic_components_of_YAML

@@ -33,13 +33,9 @@ shared_context 'integration_helper' do
 
   before do |example|
     %w(bin config lib resources).each { |dir| FileUtils.cp_r dir, buildpack_dir }
+
     buildpack_fixture = example.metadata[:buildpack_fixture]
     FileUtils.cp_r "spec/fixtures/#{buildpack_fixture.chomp}/.", buildpack_dir if buildpack_fixture
-  end
-
-  before do
-    rewrite_jre_repository_root(buildpack_dir + 'config/oracle_jre.yml', ENV['ORACLE_JRE_DOWNLOAD'])
-    rewrite_repository_root(buildpack_dir + 'config/weblogic.yml', ENV['WEBLOGIC_DOWNLOAD'])
   end
 
   after do |example|
@@ -54,24 +50,6 @@ shared_context 'integration_helper' do
     Open3.popen3(command, chdir: buildpack_dir) do |_stdin, stdout, stderr, wait_thr|
       capture_output stdout, stderr
       yield wait_thr.value if block_given?
-    end
-  end
-
-  private
-
-  def rewrite_jre_repository_root(file, new_repository_root)
-    config = YAML.load_file(file)
-    config['jre']['repository_root'] = new_repository_root
-    File.open(file, 'w') do |open_file|
-      open_file.write config.to_yaml
-    end
-  end
-
-  def rewrite_repository_root(file, new_repository_root)
-    config = YAML.load_file(file)
-    config['repository_root'] = new_repository_root
-    File.open(file, 'w') do |open_file|
-      open_file.write config.to_yaml
     end
   end
 

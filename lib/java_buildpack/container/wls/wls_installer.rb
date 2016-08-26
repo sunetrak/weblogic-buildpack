@@ -41,11 +41,11 @@ module JavaBuildpack
           print "-----> Installing WebLogic to #{@droplet.sandbox.relative_path_from(@droplet.root)}"\
                               " using downloaded file: #{input_file_path}\n"
 
-          if input_file_path[/\.zip/]
-            result_map = install_using_zip(input_file_path)
-          else
-            result_map = install_using_jar_or_binary(input_file_path)
-          end
+          result_map = if input_file_path[/\.zip/]
+                         install_using_zip(input_file_path)
+                       else
+                         install_using_jar_or_binary(input_file_path)
+                       end
 
           puts "(#{(Time.now - expand_start_time).duration})"
           result_map
@@ -63,13 +63,13 @@ module JavaBuildpack
         WLS_ORA_INVENTORY_TEMPLATE = 'ORACLE_INVENTORY_INSTALL_PATH'.freeze
         WLS_ORA_INV_INSTALL_PATH   = '/tmp/wlsOraInstallInventory'.freeze
 
-        def install_using_zip(zipFile)
+        def install_using_zip(zip_file)
           log_and_print("Installing WebLogic from downloaded zip file using config script under #{@wls_sandbox_root}!")
 
-          system "/usr/bin/unzip #{zipFile} -d #{@wls_sandbox_root} >/dev/null"
+          system "/usr/bin/unzip #{zip_file} -d #{@wls_sandbox_root} >/dev/null"
 
-          java_binary      = Dir.glob("#{@droplet.root}" + '/**/' + JAVA_BINARY, File::FNM_DOTMATCH)[0]
-          configure_script = Dir.glob("#{@wls_sandbox_root}" + '/**/' + WLS_CONFIGURE_SCRIPT)[0]
+          java_binary      = Dir.glob(@droplet.root.to_s + '/**/' + JAVA_BINARY, File::FNM_DOTMATCH)[0]
+          configure_script = Dir.glob(@wls_sandbox_root.to_s + '/**/' + WLS_CONFIGURE_SCRIPT)[0]
 
           @java_home        = File.dirname(java_binary) + '/..'
           @wls_install_path = File.dirname(configure_script)
@@ -88,7 +88,7 @@ module JavaBuildpack
           command << " export MW_HOME=#{@wls_install_path}; "
           command << " echo no |  #{configure_script} > #{@wls_sandbox_root}/install.log"
 
-          system "#{command}"
+          system command
 
           log_and_print("Finished running install, output saved at: #{@wls_sandbox_root}/install.log")
 
@@ -101,7 +101,7 @@ module JavaBuildpack
         def install_using_jar_or_binary(install_binary_file)
           print_warnings
 
-          java_binary       = Dir.glob("#{@droplet.root}" + '/**/' + JAVA_BINARY, File::FNM_DOTMATCH)[0]
+          java_binary       = Dir.glob(@droplet.root.to_s + '/**/' + JAVA_BINARY, File::FNM_DOTMATCH)[0]
           @java_home        = File.dirname(java_binary) + '/..'
 
           ## The jar install of weblogic does not like hidden directories in its install path like .java-buildpack
@@ -145,7 +145,7 @@ module JavaBuildpack
         end
 
         def save_middleware_home_in_configure_script(configure_script, wls_install_path, java_home)
-          original = File.open(configure_script, 'r') { |f| f.read }
+          original = File.open(configure_script, 'r', &:read)
 
           updated_java_home_entry       = "JAVA_HOME=\"#{java_home}\""
           updated_bea_home_entry        = "BEA_HOME=\"#{wls_install_path}\""
@@ -176,11 +176,11 @@ module JavaBuildpack
           command << "/bin/cp #{ora_install_inventory_src} /tmp;"
           command << "/bin/cp #{wls_install_response_file_src} /tmp"
 
-          system "#{command}"
+          system command
         end
 
         def update_template(template, pattern_from, pattern_to)
-          original = File.open(template, 'r') { |f| f.read }
+          original = File.open(template, 'r', &:read)
           modified = original.gsub(/#{pattern_from}/, pattern_to)
           File.open(template, 'w') { |f| f.write modified }
         end

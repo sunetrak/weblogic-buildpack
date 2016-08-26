@@ -44,8 +44,6 @@ module JavaBuildpack
           "/bin/bash #{@dumper_agent_script}"
         end
 
-        private
-
         MONITORING_AGENT_DIR    = '.monitor'.freeze
         MONITORING_RESOURCE     = 'monitoring'.freeze
         MONITORING_AGENT_PATH   = 'agent'.freeze

@@ -19,7 +19,6 @@ require 'java_buildpack/container'
 require 'pathname'
 require 'yaml'
 
-# rubocop:disable Metrics/ClassLength
 module JavaBuildpack
   module Container
     module Wls
@@ -28,10 +27,10 @@ module JavaBuildpack
       class ServiceBindingsHandler
 
         # From a set of files
-        def self.create_service_definitions_from_file_set(service_binding_locations, configRoot, output_props_file)
+        def self.create_service_definitions_from_file_set(service_binding_locations, config_root, output_props_file)
           service_binding_locations.each do |input_service_bindings_location|
             parent_path_name = Pathname.new(File.dirname(input_service_bindings_location))
-            module_name      = parent_path_name.relative_path_from(configRoot).to_s.downcase
+            module_name      = parent_path_name.relative_path_from(config_root).to_s.downcase
 
             input_service_bindings_file = File.open(input_service_bindings_location, 'r')
             service_config              = YAML.load_file(input_service_bindings_file)
@@ -121,7 +120,7 @@ module JavaBuildpack
         end
 
         # JDBC connection retry frequency
-        JDBC_CONN_CREATION_RETRY_FREQ_SECS = 900.freeze
+        JDBC_CONN_CREATION_RETRY_FREQ_SECS = 900
 
         # JDBC bindings
         def self.create_jdbc_service_definition(service_entry, output_props_file)
@@ -235,20 +234,20 @@ module JavaBuildpack
             user_passwd_tokens = given_jdbc_url[start_index..end_index].split(':')
 
             # Move the indices either before or after the markers
-            start_index -= 3
-            end_index += 2
+            start_index        -= 3
+            end_index          += 2
 
-            uri = jdbc_datasource_config['uri']
-            if uri[/^oracle/i]
-              # Only newer oracle thin driver versions support jdbc:oracle:thin:@//hostname:port format,
-              # Just go with @hostname... for now
-              # jdbc_url = given_jdbc_url[0..start_index] + 'thin:@//' + given_jdbc_url[end_index..-1]
-              jdbc_url = given_jdbc_url[0..start_index] + 'thin:@' + given_jdbc_url[end_index..-1]
-            else
-              # For all others like postgres/mysql, include the '//' as they support
-              # jdbc:postgresql://host:port/database
-              jdbc_url = given_jdbc_url[0..(start_index + 2)] + given_jdbc_url[end_index..-1]
-            end
+            uri      = jdbc_datasource_config['uri']
+            jdbc_url = if uri[/^oracle/i]
+                         # Only newer oracle thin driver versions support jdbc:oracle:thin:@//hostname:port format,
+                         # Just go with @hostname... for now
+                         # jdbc_url = given_jdbc_url[0..start_index] + 'thin:@//' + given_jdbc_url[end_index..-1]
+                         given_jdbc_url[0..start_index] + 'thin:@' + given_jdbc_url[end_index..-1]
+                       else
+                         # For all others like postgres/mysql, include the '//' as they support
+                         # jdbc:postgresql://host:port/database
+                         given_jdbc_url[0..(start_index + 2)] + given_jdbc_url[end_index..-1]
+                       end
 
             jdbc_datasource_config['username'] = user_passwd_tokens[0]
             jdbc_datasource_config['password'] = user_passwd_tokens[1]
@@ -311,14 +310,15 @@ module JavaBuildpack
         end
 
         # Dont see a point of WLS customers using AMQP to communicate...
-        def self.save_amqp_jms_service_definition(amqpService, output_props_file)
+        def self.save_amqp_jms_service_definition(amqp_service, output_props_file)
           # Dont know which InitialCF to use as well as the various arguments to pass in to bridge WLS To AMQP
           File.open(output_props_file, 'a') do |f|
             f.puts ''
-            f.puts "[ForeignJMS-AQMP-#{amqpService['name']}]"
-            f.puts "name=#{amqpService['name']}"
+            f.puts "[ForeignJMS-AQMP-#{amqp_service['name']}]"
+            f.puts "name=#{amqp_service['name']}"
             f.puts 'jndiProperties=javax.naming.factory.initial=org.apache.qpid.amqp_1_0.jms.jndi' \
-                   ".PropertiesFileInitialContextFactory;javax.naming.provider.url=#{amqpService['credentials']['uri']}"
+                   '.PropertiesFileInitialContextFactory;javax.naming.provider.url=' \
+                   "#{amqp_service['credentials']['uri']}"
             f.puts ''
           end
         end

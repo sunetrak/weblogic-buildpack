@@ -48,7 +48,7 @@ module JavaBuildpack
 
         if @supports
           @wls_version, @wls_uri = JavaBuildpack::Repository::ConfiguredItem
-                                     .find_item(@component_name, @configuration) do |candidate_version|
+                                   .find_item(@component_name, @configuration) do |candidate_version|
             candidate_version.check_size(3)
           end
 

@@ -92,7 +92,7 @@ module JavaBuildpack
           script_path = @pre_start_script.to_s
           vcap_root = Pathname.new(@application.root).parent.to_s
 
-          original = File.open(script_path, 'r') { |f| f.read }
+          original = File.open(script_path, 'r', &:read)
 
           modified = original.gsub(/REPLACE_VCAP_ROOT_MARKER/, vcap_root)
           modified = modified.gsub(/REPLACE_JAVA_ARGS_MARKER/, @droplet.java_opts.join(' '))

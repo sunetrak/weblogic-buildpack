@@ -83,7 +83,7 @@ module JavaBuildpack
         MW_HOME_BLANK_TEMPLATE  = 'MW_HOME=""'.freeze
 
         def update_domain_config_template(wls_domain_yaml_config)
-          original = File.open(wls_domain_yaml_config, 'r') { |f| f.read }
+          original = File.open(wls_domain_yaml_config, 'r', &:read)
 
           # Remove any existing references to wlsHome or domainPath
           modified = original.gsub(/ *domainName:.*$\n/, '')
@@ -111,7 +111,7 @@ module JavaBuildpack
 
         def customize_wls_server_start(start_server_script, additional_params)
           with_additional_entries = additional_params + "\r\n" + WLS_SERVER_START_TOKEN
-          original                = File.open(start_server_script, 'r') { |f| f.read }
+          original                = File.open(start_server_script, 'r', &:read)
           modified                = original.gsub(/WLS_SERVER_START_TOKEN/, with_additional_entries)
           File.open(start_server_script, 'w') { |f| f.write modified }
 
@@ -119,8 +119,8 @@ module JavaBuildpack
         end
 
         def modify_comm_env
-          Dir.glob("#{@wls_install}/**/commEnv.sh").each do |commEnvScript|
-            original = File.open(commEnvScript, 'r') { |f| f.read }
+          Dir.glob("#{@wls_install}/**/commEnv.sh").each do |comm_env_script|
+            original = File.open(comm_env_script, 'r', &:read)
             modified = original.gsub(/#{CLIENT_VM}/, SERVER_VM)
 
             updated_bea_home_entry        = "BEA_HOME=\"#{@wls_install}\""
@@ -130,7 +130,7 @@ module JavaBuildpack
             modified = modified.gsub(/#{MW_HOME_MW_TEMPLATE}/, updated_middleware_home_entry)
             modified = modified.gsub(/#{BEA_HOME_BLANK_TEMPLATE}/, updated_bea_home_entry)
             modified = modified.gsub(/#{MW_HOME_BLANK_TEMPLATE}/, updated_middleware_home_entry)
-            File.open(commEnvScript, 'w') { |f| f.write modified }
+            File.open(comm_env_script, 'w') { |f| f.write modified }
           end
 
           log('Modified commEnv.sh files to use \'-server\' vm from the default \'-client\' vm!!')
@@ -152,17 +152,19 @@ module JavaBuildpack
           JavaBuildpack::Container::Wls::ServiceBindingsHandler.create_service_definitions_from_file_set(
             @wls_complete_domain_configs_yml,
             @config_cache_root,
-            wls_complete_domain_configs_props)
+            wls_complete_domain_configs_props
+          )
 
           JavaBuildpack::Container::Wls::ServiceBindingsHandler.create_service_definitions_from_bindings(
             @app_services_config,
-            wls_complete_domain_configs_props)
+            wls_complete_domain_configs_props
+          )
 
           log("Done generating Domain Configuration Property file for WLST: #{wls_complete_domain_configs_props}")
           log('--------------------------------------')
 
           # Run wlst.sh to generate the domain as per the requested configurations
-          wlst_script = Dir.glob("#{@wls_install}" + '/**/wlst.sh')[0]
+          wlst_script = Dir.glob(@wls_install.to_s + '/**/wlst.sh')[0]
 
           command = "/bin/chmod +x #{wlst_script}; export JAVA_HOME=#{@java_home};"
           command << " export MW_HOME=#{@wls_install}; export WL_HOME=#{@wls_home}; export WLS_HOME=#{@wls_home}; " \
@@ -219,10 +221,12 @@ module JavaBuildpack
           JavaBuildpack::Container::Wls::ServiceBindingsHandler.create_service_definitions_from_file_set(
             @wls_complete_domain_configs_yml,
             @config_cache_root,
-            @wls_complete_domain_configs_props)
+            @wls_complete_domain_configs_props
+          )
           JavaBuildpack::Container::Wls::ServiceBindingsHandler.create_service_definitions_from_bindings(
             @app_services_config,
-            @wls_complete_domain_configs_props)
+            @wls_complete_domain_configs_props
+          )
 
           log('Done generating Domain Configuration Property file for WLST: '\
                             "#{@wls_complete_domain_configs_props}")

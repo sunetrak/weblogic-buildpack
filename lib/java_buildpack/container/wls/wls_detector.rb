@@ -24,8 +24,8 @@ module JavaBuildpack
 
         # return true if the application should be run on Weblogic
         def self.detect(application)
-          search_path        = (application.root).to_s + '/**/weblogic*xml'
-          wls_config_present = Dir.glob(search_path).length > 0
+          search_path        = application.root.to_s + '/**/weblogic*xml'
+          wls_config_present = !Dir.glob(search_path).empty?
 
           is_ear_app                  = app_inf?(application)
           is_web_app                  = web_inf?(application)

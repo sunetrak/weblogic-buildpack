@@ -46,7 +46,12 @@ module JavaBuildpack
           configure_start_time = Time.now
           print "-----> Configuring WebLogic domain under #{@wls_sandbox_root.relative_path_from(@droplet.root)}\n"
 
-          @wls_home = File.dirname(Dir.glob("#{@wls_install}/**/weblogic.jar")[0]) + '/../..'
+          wls_home_glob = Dir.glob("#{@wls_install}/**/weblogic.jar")[0]
+          unless wls_home_glob
+            log_and_print("Problem with install, can't locate weblogic.jar, check captured install log output at #{@wls_install}/install.log")
+          end
+
+          @wls_home = File.dirname(wls_home_glob) + '/../..'
           unless @wls_home
             log_and_print("Problem with install, check captured install log output at #{@wls_install}/install.log")
           end
@@ -210,10 +215,8 @@ module JavaBuildpack
         def link_jars_to_domain
           log('Linking pre and post jar directories relative to the Domain')
 
-          system '/bin/ln', '-s', "#{@config_cache_root}/#{WLS_PRE_JARS_CACHE_DIR}",
-                 "#{@domain_home}/#{WLS_PRE_JARS_CACHE_DIR}", '2>/dev/null'
-          system '/bin/ln', '-s', "#{@config_cache_root}/#{WLS_POST_JARS_CACHE_DIR}",
-                 "#{@domain_home}/#{WLS_POST_JARS_CACHE_DIR}", '2>/dev/null'
+          system '/bin/ln', '-s', "#{@config_cache_root}/#{WLS_PRE_JARS_CACHE_DIR}", "#{@domain_home}/#{WLS_PRE_JARS_CACHE_DIR}"
+          system '/bin/ln', '-s', "#{@config_cache_root}/#{WLS_POST_JARS_CACHE_DIR}", "#{@domain_home}/#{WLS_POST_JARS_CACHE_DIR}"
         end
 
         # Generate the property file based on app bundled configs for test against WLST

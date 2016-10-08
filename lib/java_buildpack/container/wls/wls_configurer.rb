@@ -54,7 +54,7 @@ module JavaBuildpack
             wls_home_glob = Dir.glob("#{@wls_install}/**/weblogic.jar")[0]
             break unless wls_home_glob.nil?
             @logger.warn { "Could not find #{@wls_install}/**/weblogic.jar.  Retrying." }
-            sleep 5
+            sleep 1
           end
 
           unless wls_home_glob

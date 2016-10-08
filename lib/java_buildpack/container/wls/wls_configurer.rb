@@ -46,13 +46,7 @@ module JavaBuildpack
           configure_start_time = Time.now
           print "-----> Configuring WebLogic domain under #{@wls_sandbox_root.relative_path_from(@droplet.root)}\n"
 
-          wls_home_glob = nil
-          5.times do
-            wls_home_glob = Dir.glob("#{@wls_install}/**/weblogic.jar")[0]
-            break unless wls_home_glob.nil?
-            sleep 1
-          end
-
+          wls_home_glob = Dir.glob("#{@wls_install}/**/weblogic.jar")[0]
           unless wls_home_glob
             log_and_print("Problem with install, can't locate weblogic.jar, check captured install log output " \
                           "at #{@wls_install}/install.log")

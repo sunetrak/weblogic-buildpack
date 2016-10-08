@@ -14,6 +14,8 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
+require 'java_buildpack/logging/logger_factory'
+
 module JavaBuildpack
   module Container
     module Wls
@@ -23,6 +25,7 @@ module JavaBuildpack
         include JavaBuildpack::Container::Wls::WlsConstants
 
         def initialize(configuration_map)
+          @logger                   = JavaBuildpack::Logging::LoggerFactory.instance.get_logger WlsConfigurer
           @app_name                 = configuration_map['app_name']
           @application              = configuration_map['application']
           @app_services_config      = configuration_map['app_services_config']
@@ -56,11 +59,14 @@ module JavaBuildpack
           unless wls_home_glob
             log_and_print("Problem with install, can't locate weblogic.jar, check captured install log output " \
                           "at #{@wls_install}/install.log")
+
+            @logger.info { File.read("#{wls_install}/install.log") }
           end
 
           @wls_home = File.dirname(wls_home_glob) + '/../..'
           unless @wls_home
             log_and_print("Problem with install, check captured install log output at #{@wls_install}/install.log")
+            @logger.info { File.read("#{wls_install}/install.log") }
           end
 
           log("WebLogic install is located at : #{@wls_install}")

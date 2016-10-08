@@ -25,7 +25,7 @@ module JavaBuildpack
         include JavaBuildpack::Container::Wls::WlsConstants
 
         def initialize(configuration_map)
-          @logger                   = JavaBuildpack::Logging::LoggerFactory.instance.get_logger RepositoryIndex
+          @logger                   = JavaBuildpack::Logging::LoggerFactory.instance.get_logger WlsConfigurer
           @app_name                 = configuration_map['app_name']
           @application              = configuration_map['application']
           @app_services_config      = configuration_map['app_services_config']

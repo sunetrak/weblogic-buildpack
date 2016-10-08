@@ -60,13 +60,13 @@ module JavaBuildpack
             log_and_print("Problem with install, can't locate weblogic.jar, check captured install log output " \
                           "at #{@wls_install}/install.log")
 
-            @logger.info { File.read("#{wls_install}/install.log") }
+            @logger.info { File.read("#{@wls_install}/install.log") }
           end
 
           @wls_home = File.dirname(wls_home_glob) + '/../..'
           unless @wls_home
             log_and_print("Problem with install, check captured install log output at #{@wls_install}/install.log")
-            @logger.info { File.read("#{wls_install}/install.log") }
+            @logger.info { File.read("#{@wls_install}/install.log") }
           end
 
           log("WebLogic install is located at : #{@wls_install}")

@@ -52,8 +52,6 @@ module JavaBuildpack
             system "/bin/ls -alR  /tmp/cache/ "
             system "/bin/ls -al  #{@wls_install}/server/lib "
             system "/bin/cat #{@wls_sandbox_root}/install.log "
-            system "ps -ef "
-            system "sleep 60"
           end
 
           wls_home_glob = Dir.glob("#{@wls_install}/**/weblogic.jar")[0]

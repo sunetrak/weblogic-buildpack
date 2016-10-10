@@ -68,7 +68,13 @@ module JavaBuildpack
 
           system "/usr/bin/unzip #{zip_file} -d #{@wls_sandbox_root} >/dev/null"
 
-          java_binary      = Dir.glob(@droplet.root.to_s + '/**/' + JAVA_BINARY, File::FNM_DOTMATCH)[0]
+          #java_binary      = Dir.glob(@droplet.root.to_s + '/**/' + JAVA_BINARY, File::FNM_DOTMATCH)[0]
+          Dir.glob(@droplet.root.to_s + '/**/' + JAVA_BINARY, File::FNM_DOTMATCH).each { | file_path |
+               unless File.directory?(file_path)
+                 java_binary = file_ref
+                 break
+               end
+          }
           configure_script = Dir.glob(@wls_sandbox_root.to_s + '/**/' + WLS_CONFIGURE_SCRIPT)[0]
 
           @java_home        = File.dirname(java_binary) + '/..'

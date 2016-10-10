@@ -50,20 +50,21 @@ module JavaBuildpack
           debug_wls_install= ENV['WLS_INSTALL_DEBUG']
           if debug_wls_install
             system "/bin/ls -alR  /tmp/cache/ " # DEBUG
-            system "/bin/ls -alR  #{@wls_install} " # DEBUG
-            system "/bin/cat /tmp/app/*/wlsInstall/install.log " # DEBUG
-            system "sleep 20" # DEBUG
+            system "/bin/ls -al  #{@wls_install}/server/lib " # DEBUG
+            system "/bin/cat #{@wls_sandbox_root}/install.log " # DEBUG
+            system "ps -ef " # DEBUG
+            system "sleep 60" # DEBUG
           end
 
           wls_home_glob = Dir.glob("#{@wls_install}/**/weblogic.jar")[0]
           unless wls_home_glob
             log_and_print("Problem with install, can't locate weblogic.jar, check captured install log output " \
-                          "at #{@wls_install}/install.log")
+                          "at #{@wls_sandbox_root}/install.log")
           end
 
           @wls_home = File.dirname(wls_home_glob) + '/../..'
           unless @wls_home
-            log_and_print("Problem with install, check captured install log output at #{@wls_install}/install.log")
+            log_and_print("Problem with install, check captured install log output at #{@wls_sandbox_root}/install.log")
           end
 
           log("WebLogic install is located at : #{@wls_install}")

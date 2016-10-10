@@ -80,7 +80,7 @@ module JavaBuildpack
 
           @wls_install_path = File.dirname(configure_script)
 
-          log_and_print('Conifgure script set to use java_home : #{@java_home} and wls_install_path: #{@wls_install_path} !!')
+          log_and_print("Configured script to use JAVA_HOME: #{@java_home} and WLS_INSTALL_PATH: #{@wls_install_path} !!")
           system "/bin/chmod +x #{configure_script}"
 
           # Run configure.sh so the actual files are unpacked fully and paths are configured correctly

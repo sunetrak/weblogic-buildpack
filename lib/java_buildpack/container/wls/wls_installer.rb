@@ -71,7 +71,7 @@ module JavaBuildpack
           #java_binary      = Dir.glob(@droplet.root.to_s + '/**/' + JAVA_BINARY, File::FNM_DOTMATCH)[0]
           Dir.glob(@droplet.root.to_s + '/**/' + JAVA_BINARY, File::FNM_DOTMATCH).each { | file_path |
                unless File.directory?(file_path)
-                 java_binary = file_ref
+                 java_binary = file_path
                  break
                end
           }
@@ -80,6 +80,7 @@ module JavaBuildpack
           @java_home        = File.dirname(java_binary) + '/..'
           @wls_install_path = File.dirname(configure_script)
 
+          log_and_print('Conifgure script set to use java_home : #{@java_home} and wls_install_path: #{@wls_install_path} !!')
           system "/bin/chmod +x #{configure_script}"
 
           # Run configure.sh so the actual files are unpacked fully and paths are configured correctly

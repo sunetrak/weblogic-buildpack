@@ -340,7 +340,7 @@ module JavaBuildpack
         return unless (parent + '/' + child).exist?
 
         # Possible the APP-INF folder got stripped out as it didn't contain anything
-        system "mkdir #{parent}/#{child}"
+        system "mkdir -p #{parent}/#{child}"
       end
 
       # Log a message

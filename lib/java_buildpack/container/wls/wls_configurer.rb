@@ -255,6 +255,9 @@ module JavaBuildpack
           command << ' status=1; while [ \"$status\" != \"0\" ]; ' \
                      ' do sleep 10; netstat -an | grep LISTEN | grep 7001 2>/dev/null;' \
                      ' status=$?; done; '
+
+          command << " sed -i.bak 's#JVM_ARGS=\"#JVM_ARGS=\" -Djava.security.egd=file:/dev/./urandom #g' " \
+                     "#{wlst_script} 2>/dev/null; "
           command << " #{wlst_script}  #{@custom_domain_config_script} #{wls_complete_domain_configs_props}"
           command << " > #{@wls_sandbox_root}/wlstDomainExtension.log"
 

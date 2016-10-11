@@ -79,7 +79,7 @@ module JavaBuildpack
 
           @wls_install_path = File.dirname(configure_script)
 
-          log_and_print("Configured script to use JAVA_HOME: #{@java_home} \
+          log_and_print("Configured script to use JAVA_HOME: #{@java_home} \n\
                           and WLS_INSTALL_PATH: #{@wls_install_path} !!")
           system "/bin/chmod +x #{configure_script}"
 

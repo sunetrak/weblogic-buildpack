@@ -81,7 +81,7 @@ module JavaBuildpack
                                                                    File.dirname(__FILE__))).freeze
 
         # Set to true if there are custom resources and startup scripts
-        CUSTOM_RESOURCES_PRESENT = true
+        CUSTOM_RESOURCES_PRESENT = false
 
         # the package structure would be:
         # wls-buildpack

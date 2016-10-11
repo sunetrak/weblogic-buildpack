@@ -39,7 +39,7 @@ module JavaBuildpack
           @wls_domain_path          = configuration_map['wls_domain_path']
           @wls_domain_yaml_config   = configuration_map['wls_domain_yaml_config']
           @wls_domain_config_script = configuration_map['wls_domain_config_script']
-          @wls_buildpack_config_cache_root  = configuration_map['buildpack_config_cache_root']
+          @wls_buildpack_config_cache_root = configuration_map['wls_buildpack_config_cache_root']
         end
 
         # Configure Weblogic
@@ -47,9 +47,9 @@ module JavaBuildpack
           configure_start_time = Time.now
           print "-----> Configuring WebLogic domain under #{@wls_sandbox_root.relative_path_from(@droplet.root)}\n"
 
-          debug_wls_install= ENV['WLS_INSTALL_DEBUG']
+          debug_wls_install = ENV['WLS_INSTALL_DEBUG']
           if debug_wls_install
-            system "/bin/ls -alR  /tmp/cache/ "
+            system '/bin/ls -alR  /tmp/cache/'
             system "/bin/ls -al  #{@wls_install}/server/lib "
             system "/bin/cat #{@wls_sandbox_root}/install.log "
           end
@@ -86,6 +86,7 @@ module JavaBuildpack
 
           create_domain
           check_domain
+          update_domain
           puts "(#{(Time.now - configure_start_time).duration})"
         end
 
@@ -95,6 +96,8 @@ module JavaBuildpack
         MW_HOME_MW_TEMPLATE     = 'MW_HOME="\$MW_HOME"'.freeze
         BEA_HOME_BLANK_TEMPLATE = 'BEA_HOME=""'.freeze
         MW_HOME_BLANK_TEMPLATE  = 'MW_HOME=""'.freeze
+
+        CUSTOM_DOMAIN_EXTENSION_SCRIPT = 'customDomainExtension.py'.freeze
 
         def update_domain_config_template(wls_domain_yaml_config)
           original = File.open(wls_domain_yaml_config, 'r', &:read)
@@ -225,12 +228,63 @@ module JavaBuildpack
           log('Linking pre and post jar directories relative to the Domain')
           system '/bin/mkdir', '-p', "#{@config_cache_root}/#{WLS_PRE_JARS_CACHE_DIR}"
           system '/bin/mkdir', '-p', "#{@config_cache_root}/#{WLS_POST_JARS_CACHE_DIR}"
-          system '/bin/cp', '-R', "#{@wls_buildpack_config_cache_root}/#{WLS_PRE_JARS_CACHE_DIR}",  "#{@config_cache_root}/"
-          system '/bin/cp', '-R', "#{@wls_buildpack_config_cache_root}/#{WLS_POST_JARS_CACHE_DIR}",  "#{@config_cache_root}/"
-          system '/bin/ln', '-s', "#{@config_cache_root}/#{WLS_PRE_JARS_CACHE_DIR}",
+          system '/bin/cp', '-R', "#{@wls_buildpack_config_cache_root}/#{WLS_PRE_JARS_CACHE_DIR}", \
+                 "#{@config_cache_root}/"
+          system '/bin/cp', '-R', "#{@wls_buildpack_config_cache_root}/#{WLS_POST_JARS_CACHE_DIR}", \
+                 "#{@config_cache_root}/"
+          system '/bin/ln', '-s', "#{@config_cache_root}/#{WLS_PRE_JARS_CACHE_DIR}", \
                  "#{@domain_home}/#{WLS_PRE_JARS_CACHE_DIR}"
-          system '/bin/ln', '-s', "#{@config_cache_root}/#{WLS_POST_JARS_CACHE_DIR}",
+          system '/bin/ln', '-s', "#{@config_cache_root}/#{WLS_POST_JARS_CACHE_DIR}", \
                  "#{@domain_home}/#{WLS_POST_JARS_CACHE_DIR}"
+        end
+
+        def update_domain
+          return unless CUSTOM_RESOURCES_PRESENT
+
+          # For now, expecting only one script to be run to create the domain
+          @custom_domain_config_script = Dir.glob("#{CUSTOM1_RESOURCE_PATH}/#{SCRIPT_CACHE_DIR}/*.py")[0]
+          unless @custom_domain_config_script
+            log('No Custom Domain creation script found,returning!!')
+            return
+          end
+
+          run_domain_update
+        end
+
+        def run_domain_update
+          wlst_script = Dir.glob(@wls_install.to_s + '/**/wlst.sh')[0]
+          command = "/bin/chmod +x #{wlst_script}; export JAVA_HOME=#{@java_home};"
+          command << " export MW_HOME=#{@wls_install}; export WL_HOME=#{@wls_home}; export WLS_HOME=#{@wls_home}; " \
+                     " export DOMAIN_HOME=#{@domain_home}; "
+
+          @custom_domain_config_script = Dir.glob("#{CUSTOM1_RESOURCE_PATH}/#{SCRIPT_CACHE_DIR}/*.py")[0]
+          @custom_domain_setup_script = Dir.glob("#{CUSTOM1_RESOURCE_PATH}/#{SCRIPT_CACHE_DIR}/*.sh")[0]
+
+          if @custom_domain_setup_script
+            command << " source #{@custom_domain_setup_script}; \n"
+          end
+
+          command << " source #{@domain_home}/bin/setDomainEnv.sh;\n"
+          command << " echo CLASSPATH set to $CLASSPATH;\n echo Starting server ...\n"
+          command << " nohup #{@domain_home}/bin/startWebLogic.sh &"
+          command << ' status=1; while [ \"$status\" != \"0\" ]; ' \
+                     ' do sleep 10; netstat -an | grep LISTEN | grep 7001 2>/dev/null;' \
+                     ' status=$?; done; '
+
+          command << " sed -i.bak 's#JVM_ARGS=\"#JVM_ARGS=\" -Djava.security.egd=file:/dev/./urandom #g' " \
+                     "#{wlst_script} 2>/dev/null; "
+          command << " #{wlst_script}  #{@custom_domain_config_script} #{wls_complete_domain_configs_props}"
+          command << " > #{@wls_sandbox_root}/wlstDomainExtension.log"
+
+          log("Executing WLST for Domain update: #{command}")
+          print "-----> Executing WLST for Domain update:\n #{command}\n"
+          system "#{command} "
+
+          log("WLST finished extending domain under #{@domain_home}. WLST log saved at: " \
+              "#{@wls_sandbox_root}/wlstDomainExtension.log")
+
+          print "-----> Finished updating WebLogic Domain under #{@domain_home.relative_path_from(@droplet.root)}.\n"
+          print "       WLST log saved at: #{@wls_sandbox_root}/wlstDomainExtension.log\n"
         end
 
         # Generate the property file based on app bundled configs for test against WLST

@@ -108,7 +108,7 @@ fi
 # Get the Staging env Memory limit
 
 #STAGING_MEMORY_LIMIT=REPLACE_STAGING_MEMORY_LIMIT_MARKER
-STAGING_MEMORY_LIMIT=512
+STAGING_MEMORY_LIMIT=1024
 
 # Check the MEMORY_LIMIT env variable and see if it has been modified compared to staging env
 # Possible the app was not restaged to reflect the new MEMORY_LIMITs

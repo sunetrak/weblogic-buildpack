@@ -68,19 +68,19 @@ module JavaBuildpack
 
           system "/usr/bin/unzip #{zip_file} -d #{@wls_sandbox_root} >/dev/null"
 
-          #java_binary      = Dir.glob(@droplet.root.to_s + '/**/' + JAVA_BINARY, File::FNM_DOTMATCH)[0]
-          Dir.glob(@droplet.root.to_s + '/**/' + JAVA_BINARY, File::FNM_DOTMATCH).each { | file_path |
-               unless File.directory?(file_path)
-                 java_binary = file_path
-                 @java_home  = File.dirname(java_binary) + '/..'
-                 break
-               end
-          }
+          # java_binary = Dir.glob(@droplet.root.to_s + '/**/' + JAVA_BINARY, File::FNM_DOTMATCH)[0]
+          Dir.glob(@droplet.root.to_s + '/**/' + JAVA_BINARY, File::FNM_DOTMATCH).each do |file_path|
+            next if File.directory?(file_path)
+            java_binary = file_path
+            @java_home  = File.dirname(java_binary) + '/..'
+            break
+          end
           configure_script = Dir.glob(@wls_sandbox_root.to_s + '/**/' + WLS_CONFIGURE_SCRIPT)[0]
 
           @wls_install_path = File.dirname(configure_script)
 
-          log_and_print("Configured script to use JAVA_HOME: #{@java_home} and WLS_INSTALL_PATH: #{@wls_install_path} !!")
+          log_and_print("Configured script to use JAVA_HOME: #{@java_home} \
+                          and WLS_INSTALL_PATH: #{@wls_install_path} !!")
           system "/bin/chmod +x #{configure_script}"
 
           # Run configure.sh so the actual files are unpacked fully and paths are configured correctly

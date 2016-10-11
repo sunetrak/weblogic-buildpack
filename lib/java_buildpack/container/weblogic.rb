@@ -167,7 +167,7 @@ module JavaBuildpack
         # If there is no Domain Config yaml file, copy over the buildpack bundled basic domain configs.
         # Create the appconfig_cache_root '.wls' directory under the App Root as needed
         unless @wls_domain_yaml_config
-          system "mkdir #{@app_config_cache_root} 2>/dev/null; " \
+          system "mkdir -p #{@app_config_cache_root} 2>/dev/null; " \
                   " cp  #{@buildpack_config_cache_root}/*.yml #{@app_config_cache_root}"
 
           @wls_domain_yaml_config = Dir.glob("#{@app_config_cache_root}/*.yml")[0]
@@ -175,11 +175,11 @@ module JavaBuildpack
         end
 
         # For now, expecting only one script to be run to create the domain
-        @wls_domain_config_script = Dir.glob("#{@app_config_cache_root}/#{WLS_SCRIPT_CACHE_DIR}/*.py")[0]
+        @wls_domain_config_script = Dir.glob("#{@app_config_cache_root}/#{SCRIPT_CACHE_DIR}/*.py")[0]
 
         # If there is no Domain Script, use the buildpack bundled script.
         unless @wls_domain_config_script
-          @wls_domain_config_script = Dir.glob("#{@buildpack_config_cache_root}/#{WLS_SCRIPT_CACHE_DIR}/*.py")[0]
+          @wls_domain_config_script = Dir.glob("#{@buildpack_config_cache_root}/#{SCRIPT_CACHE_DIR}/*.py")[0]
           log('No Domain creation script found, reusing one from the buildpack bundled template!!')
         end
 
@@ -282,7 +282,7 @@ module JavaBuildpack
           'wls_domain_yaml_config'   => @wls_domain_yaml_config,
           'wls_domain_config_script' => @wls_domain_config_script,
           'wls_domain_path'          => @wls_domain_path,
-          'buildpack_config_cache_root'  => @buildpack_config_cache_root
+          'wls_buildpack_config_cache_root' => @buildpack_config_cache_root
         }
 
         configurer = JavaBuildpack::Container::Wls::WlsConfigurer.new(configuration_map)
@@ -340,7 +340,7 @@ module JavaBuildpack
         return unless (parent + '/' + child).exist?
 
         # Possible the APP-INF folder got stripped out as it didn't contain anything
-        system "mkdir #{parent}/#{child}"
+        system "mkdir -p #{parent}/#{child}"
       end
 
       # Log a message

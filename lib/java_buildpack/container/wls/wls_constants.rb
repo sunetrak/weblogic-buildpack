@@ -67,11 +67,64 @@ module JavaBuildpack
         WLS_FOREIGN_JMS_CONFIG_DIR = 'foreignjms'.freeze
 
         # Following are relative to the .wls folder all under the APP ROOT
-        WLS_SCRIPT_CACHE_DIR       = 'script'.freeze
+        # Scripts
+        SCRIPT_CACHE_DIR           = 'script'.freeze
+        # Hooks
+        HOOKS_CACHE_DIR            = 'hooks'.freeze
+        # preStart script under hooks
+        PRE_START_SCRIPT           = 'preStart.sh'.freeze
+        # postStop script under hooks
+        POST_STOP_SCRIPT           = 'postStop.sh'.freeze
 
         # Default WebLogic Configurations packaged within the buildpack
         BUILDPACK_CONFIG_CACHE_DIR = Pathname.new(File.expand_path('../../../../resources/wls',
                                                                    File.dirname(__FILE__))).freeze
+
+        # Set to true if there are custom resources and startup scripts
+        CUSTOM_RESOURCES_PRESENT = true
+
+        # the package structure would be:
+        # wls-buildpack
+        #  -- resources
+        #      -- wls    # BUILDPACK_CONFIG_CACHE_DIR
+        #         -- hooks
+        #            --- preStart.sh
+        #            --- postStop.sh
+        #      -- custom1 # CUSTOM1_RESOURCE_PATH
+        #         -- hooks
+        #            --- preCustomStart.sh
+        #            --- postCustomStop.sh
+        #         -- script  # CUSTOM1_SCRIPT_PATH
+        #            --- customDomainExtensionScript.py  # Custom Domain extension script
+        #         -- customType1  # CUSTOM1_TYPE1_RESOURCE_PATH
+        #            --- lib # containing jars
+        #         -- customType2  # CUSTOM1_TYPE2_RESOURCE_PATH
+        #            --- lib # containing jars
+
+        # Allow customization of resources
+        # Uncomment and edit names as required
+
+        # Resource folder under /resources
+        CUSTOM1_RESOURCE         = 'custom1'.freeze
+        # Custom Type1 Resource folder under /resources/custom1
+        CUSTOM1_TYPE1_RESOURCE   = 'custom1Type1'.freeze
+        # Custom Type2 Resource folder under /resources/custom1
+        CUSTOM1_TYPE2_RESOURCE   = 'custom1Type2'.freeze
+        # Custom PreStart script /resources/custom1
+        PRE_CUSTOM1_START_SCRIPT = 'preCustom1Start.sh'.freeze
+        # Resource folder under /resources
+        POST_CUSTOM1_STOP_SCRIPT = 'postCustom1Stop.sh'.freeze
+
+        # Hooks folder under buildpack config cache
+        START_STOP_HOOKS_SRC_PATH   = "#{BUILDPACK_CONFIG_CACHE_DIR}/#{HOOKS_CACHE_DIR}".freeze
+        # Full path to custom resource relative (obtained relative to buildpack config cache
+        CUSTOM1_RESOURCE_PATH       = "#{BUILDPACK_CONFIG_CACHE_DIR}/../#{CUSTOM1_RESOURCE}".freeze
+        # Full path to hooks under custom resources
+        CUSTOM1_HOOKS_SRC_PATH      = "#{CUSTOM1_RESOURCE_PATH}/#{HOOKS_CACHE_DIR}".freeze
+        # Full path to custom resources of type 1 under custom1 resources
+        CUSTOM1_TYPE1_RESOURCE_PATH = "#{CUSTOM1_RESOURCE_PATH}/#{CUSTOM1_TYPE1_RESOURCE}".freeze
+        # Full path to custom resources of type 2 under custom2 resources
+        CUSTOM1_TYPE2_RESOURCE_PATH = "#{CUSTOM1_RESOURCE_PATH}/#{CUSTOM1_TYPE2_RESOURCE}".freeze
 
       end
     end

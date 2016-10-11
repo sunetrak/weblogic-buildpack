@@ -156,7 +156,7 @@ module JavaBuildpack
         end
 
         def create_domain
-          @wls_complete_domain_configs_yml  = complete_domain_configs_yml
+          @wls_complete_domain_configs_yml = complete_domain_configs_yml
 
           # Filtered Pathname has a problem with non-existing files. So, get the path as string and add the props file
           # name for the output file

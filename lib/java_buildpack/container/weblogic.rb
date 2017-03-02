@@ -294,7 +294,7 @@ module JavaBuildpack
         vcap_application_env_value = ENV['VCAP_APPLICATION']
 
         return unless vcap_application_env_value
-        vcap_app_map = YAML.load(vcap_application_env_value)
+        vcap_app_map = YAML.safe_load(vcap_application_env_value)
 
         # name     = vcap_app_map['name']
         @app_name    = vcap_app_map['application_name']

@@ -73,6 +73,7 @@ module Package
       'spring_auto_reconfiguration'         => 'Spring Auto-reconfiguration',
       'spring_boot_cli'                     => 'Spring Boot CLI',
       'tomcat'                              => 'Tomcat',
+      'weblogic'                            => 'WebLogic Appication Server',
       'your_kit_profiler'                   => 'YourKit Profiler'
     }.freeze
 
@@ -215,7 +216,7 @@ module Package
                .sort_by { |dependency| dependency['name'].downcase }
                .map { |dependency| [dependency['name'], dependency['version']] }
 
-        puts Terminal::Table.new title: "Java Buildpack #{v['buildpack']}", rows: rows
+        puts Terminal::Table.new title: "WebLogic Buildpack #{v['buildpack']}", rows: rows
       end
     end
 
